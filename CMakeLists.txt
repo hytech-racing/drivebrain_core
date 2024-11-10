@@ -6,6 +6,7 @@ find_package(hytech_np_proto_cpp CONFIG REQUIRED)
 find_package(drivebrain_core_msgs_proto_cpp CONFIG REQUIRED)
 find_package(cmake_macros REQUIRED)
 include(create_package)
+include(CMakeFindDependencyMacro)
 
 add_library(drivebrain_core SHARED 
     src/JsonFileHandler.cpp 
