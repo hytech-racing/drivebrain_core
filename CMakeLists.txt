@@ -8,13 +8,13 @@ find_package(cmake_macros REQUIRED)
 include(create_package)
 
 add_library(drivebrain_core SHARED 
-    drivebrain_core_base/src/JsonFileHandler.cpp 
-    drivebrain_core_base/src/Configurable.cpp 
-    drivebrain_core_base/src/Logger.cpp)
+    src/JsonFileHandler.cpp 
+    src/Configurable.cpp 
+    src/Logger.cpp)
 
 target_include_directories(drivebrain_core PUBLIC 
-    $<INSTALL_INTERFACE:drivebrain_core_base/include/public>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/drivebrain_core_base/include/public>    
+    $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>    
 )
 
 target_link_libraries(drivebrain_core PUBLIC 
@@ -28,6 +28,6 @@ target_link_libraries(drivebrain_core PUBLIC
 make_cmake_package(drivebrain_core drivebrain)
 
 install(
-    DIRECTORY drivebrain_core_base/include/
-    DESTINATION drivebrain_core_base/include
+    DIRECTORY include/
+    DESTINATION include
 )
