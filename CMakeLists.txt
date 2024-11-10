@@ -1,4 +1,11 @@
 # drivebrain core library
+
+find_package(nlohmann_json REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system program_options)
+find_package(hytech_np_proto_cpp CONFIG REQUIRED)
+find_package(drivebrain_core_msgs_proto_cpp CONFIG REQUIRED)
+find_package(cmake_macros REQUIRED)
+
 add_library(drivebrain_core SHARED 
     drivebrain_core_base/src/JsonFileHandler.cpp 
     drivebrain_core_base/src/Configurable.cpp 
