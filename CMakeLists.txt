@@ -17,7 +17,7 @@ target_link_libraries(drivebrain_core PUBLIC
     hytech_np_proto_cpp::hytech_np_proto_cpp
 )
 
-make_cmake_package(drivebrain_core drivebrain)
+make_cmake_package(drivebrain_core pluh)
 
 install(
     DIRECTORY drivebrain_core_base/include/
