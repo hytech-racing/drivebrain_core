@@ -1,11 +1,12 @@
 # drivebrain core library
+cmake_minimum_required(VERSION 3.24)
+project(drivebrain_core LANGUAGES CXX C)
 
 find_package(nlohmann_json REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system program_options)
 find_package(hytech_np_proto_cpp CONFIG REQUIRED)
 find_package(drivebrain_core_msgs_proto_cpp CONFIG REQUIRED)
 find_package(cmake_macros REQUIRED)
-include(create_package)
 
 add_library(drivebrain_core SHARED 
     src/JsonFileHandler.cpp 
@@ -24,10 +25,11 @@ target_link_libraries(drivebrain_core PUBLIC
     drivebrain_core_msgs_proto_cpp::drivebrain_core_msgs_proto_cpp
     hytech_np_proto_cpp::hytech_np_proto_cpp
 )
+include(create_package)
 
-make_cmake_package(drivebrain_core drivebrain)
+make_cmake_package(drivebrain_core drivebrain_core)
 
 install(
     DIRECTORY include/
-    DESTINATION include
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/include
 )
