@@ -7,8 +7,8 @@ find_package(Boost REQUIRED COMPONENTS system program_options)
 find_package(hytech_np_proto_cpp CONFIG REQUIRED)
 find_package(drivebrain_core_msgs_proto_cpp CONFIG REQUIRED)
 find_package(cmake_macros REQUIRED)
-find_package(spdlog REQUIRED)
 find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
 
 add_library(drivebrain_core SHARED 
     src/JsonFileHandler.cpp 
@@ -26,6 +26,8 @@ target_link_libraries(drivebrain_core PUBLIC
     Boost::system
     drivebrain_core_msgs_proto_cpp::drivebrain_core_msgs_proto_cpp
     hytech_np_proto_cpp::hytech_np_proto_cpp
+    spdlog::spdlog
+
 )
 include(create_package)
 
