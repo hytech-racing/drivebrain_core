@@ -7,6 +7,8 @@ find_package(Boost REQUIRED COMPONENTS system program_options)
 find_package(hytech_np_proto_cpp CONFIG REQUIRED)
 find_package(drivebrain_core_msgs_proto_cpp CONFIG REQUIRED)
 find_package(cmake_macros REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(fmt REQUIRED)
 
 add_library(drivebrain_core SHARED 
     src/JsonFileHandler.cpp 
@@ -32,4 +34,4 @@ make_cmake_package(drivebrain_core drivebrain_core)
 install(
     DIRECTORY include/
     DESTINATION ${CMAKE_INSTALL_PREFIX}/include
-)
+)a
