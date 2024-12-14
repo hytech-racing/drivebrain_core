@@ -4,6 +4,7 @@
 using speed_m_s = float;
 using torque_nm = float;
 using velocity_rpm = float;
+using meters = float;
 
 namespace constants
 {

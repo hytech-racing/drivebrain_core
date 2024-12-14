@@ -8,5 +8,4 @@ find_dependency(Boost REQUIRED COMPONENTS system program_options)
 find_dependency(hytech_np_proto_cpp CONFIG REQUIRED)
 find_dependency(drivebrain_core_msgs_proto_cpp CONFIG REQUIRED)
 find_dependency(cmake_macros REQUIRED)
-
 check_required_components(drivebrain_core)
