@@ -1,4 +1,5 @@
 #include <Configurable.hpp>
+#include <nhlohmann/json.hpp>
 
 using namespace core::common;
 std::string Configurable::get_name()
@@ -19,7 +20,6 @@ std::vector<std::string> Configurable::get_param_names()
     } // unlocks here
     return names;
 }
-
 
 Configurable::ParamTypes Configurable::get_cached_param(std::string id)
 {
@@ -51,4 +51,13 @@ void Configurable::handle_live_param_update(const std::string &key, Configurable
         // call the user signals that can be optionally attached
         param_update_handler_sig(_live_params.param_vals);
     }
+}
+
+
+nhlohmann::json Configurable::get_schema()
+{
+
+    schema[_component_name] = json::object();
+    schema[_component_name]["type"] = "object";
+    // schema[_]
 }

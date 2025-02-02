@@ -42,8 +42,11 @@
 // live parameters:
 // - [x] add live parameter handling through use of boost signals
 
-// the live parameter settings will be handled by having a true or false flag within the get_parameter.
-// if this flag is set, the is gotten from the config file and then the map of live parameters gets it's
+// - [ ] schema creator function from json file 
+
+// the schema will be based off of the json file that we load, however nothing will be a required field.
+// this way, even if the json file that we loaded has extra fields that arent being used we will be fine
+// we broadcast / record parameter data at around 1 hz OR on change of a parameter 
 namespace core
 {
     namespace common
@@ -88,7 +91,8 @@ namespace core
             /// @param id map key for parameter within map
             /// @return param value
             Configurable::ParamTypes get_cached_param(std::string id);
-
+            
+            nhlohmann::json get_schema();
         protected:
             /// @brief boost signal that the user is expected to connect their parameter update handler function for changing their internal parameter values
             boost::signals2::signal<void(const std::unordered_map<std::string, ParamTypes> &)> param_update_handler_sig;
