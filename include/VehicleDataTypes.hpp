@@ -14,6 +14,9 @@ namespace core
     struct RawInputData
     {
         veh_vec<float> raw_load_cell_values;
+        veh_vec<float> raw_shock_pot_values;
+        float raw_steering_analog;
+        float raw_steering_digital;
     };
 
     struct DriverInput
