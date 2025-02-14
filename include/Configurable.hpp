@@ -12,6 +12,7 @@
 #include <optional>
 #include <variant>
 #include <mutex>
+#include <vector>
 
 // STORY:
 
@@ -93,11 +94,13 @@ namespace core
             Configurable::ParamTypes get_cached_param(std::string id);
             
             nhlohmann::json get_schema();
+            bool is_configured() { return _configured; }
         protected:
             /// @brief boost signal that the user is expected to connect their parameter update handler function for changing their internal parameter values
             boost::signals2::signal<void(const std::unordered_map<std::string, ParamTypes> &)> param_update_handler_sig;
 
-            /// @brief virtual init function that has to be implemented. it is expected that the use puts their getters for live / "static" parameters within this function
+            /// @brief virtual init function that has to be implemented. after a successful init the member var @ref _configured must be set to true.
+            // it is expected that the use puts their getters for live and "static" parameters within this function. 
             /// @return false if not all params found that were expected, true if all params were good. other initialization code can be included not pertaining to configuration base class as well
             virtual bool init() = 0;
 
@@ -175,6 +178,7 @@ namespace core
             }
 
         private:
+            bool _configured = false;
             core::Logger &_logger;
             std::string _component_name;
             core::JsonFileHandler &_json_file_handler;

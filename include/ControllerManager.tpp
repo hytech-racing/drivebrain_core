@@ -24,6 +24,7 @@ bool control::ControllerManager<ControllerType, NumControllers>::init()
     _max_torque_switch = *max_torque_switch;
     _max_accel_switch_req = *max_accel_switch_request;
 
+    _configured = true;
     return true;
 }
 
