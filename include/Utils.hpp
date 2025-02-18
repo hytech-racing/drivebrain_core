@@ -7,6 +7,7 @@
 
 
 /// @brief generic data vector type that can be used with tire and / or anything to do with 4 corners of the car.
+#include <cstddef>
 template <typename T>
 struct veh_vec
 {
@@ -14,6 +15,25 @@ struct veh_vec
     T FR;
     T RL;
     T RR;
+
+    template<size_t ind>
+    void set_from_index(T val)
+    {
+        static_assert(ind <= 3, "ERROR: index cannot be greater than 3");
+        if constexpr (ind == 0)
+        {
+            FL = val;
+        } else if(ind == 1)
+        {
+            FR = val;
+        } else if(ind == 2)
+        {
+            RL = val;
+        } else {
+            RR = val;
+        }
+
+    }
 };
 
 template <typename T>

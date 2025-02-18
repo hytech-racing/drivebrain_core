@@ -17,6 +17,8 @@ namespace core
         veh_vec<float> raw_shock_pot_values;
         float raw_steering_analog;
         float raw_steering_digital;
+        veh_vec<float> raw_inverter_torques;
+        veh_vec<float> raw_inverter_power;
     };
 
     struct DriverInput
