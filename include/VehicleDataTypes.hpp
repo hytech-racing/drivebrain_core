@@ -15,6 +15,11 @@ namespace core
     struct RawInputData
     {
         veh_vec<float> raw_load_cell_values;
+        veh_vec<float> raw_shock_pot_values;
+        float raw_steering_analog;
+        float raw_steering_digital;
+        veh_vec<float> raw_inverter_torques;
+        veh_vec<float> raw_inverter_power;
     };
 
     struct DriverInput
@@ -22,7 +27,10 @@ namespace core
         float requested_accel; // float from 0 to 1 representing percent of accel pedal travel
         float requested_brake; // float from 0 to 1 representing pedal travel of brake
     };
-
+    struct ControllerTorqueOut
+    {
+        veh_vec<float> res_torque_lim_nm;
+    };
     struct TireDynamics
     {
         veh_vec<xyz_vec<float>> tire_forces_n;
@@ -68,7 +76,7 @@ namespace core
 
     struct TorqueControlOut
     {
-        veh_vec<float> desired_torques_nm;
+        veh_vec<torque_nm> desired_torques_nm;
     };
     struct VehicleState
     {
@@ -85,7 +93,7 @@ namespace core
         SpeedControlOut prev_controller_output;
         TireDynamics tire_dynamics;
         veh_vec<float> driver_torque;
-        TorqueControlOut matlab_math_temp_out;
+        ControllerTorqueOut matlab_math_temp_out;
     };
 
     // we will have both speed and torque control output controllers
