@@ -1,8 +1,9 @@
 #ifndef __VEHICLESTATE_H__
 #define __VEHICLESTATE_H__
 #include <Utils.hpp>
-#include <variant>
 #include <Literals.hpp>
+#include <variant>
+
 // TODO this will need a one-to-one protobuf message
 namespace core
 {
@@ -14,21 +15,12 @@ namespace core
     struct RawInputData
     {
         veh_vec<float> raw_load_cell_values;
-        veh_vec<float> raw_shock_pot_values;
-        float raw_steering_analog;
-        float raw_steering_digital;
-        veh_vec<float> raw_inverter_torques;
-        veh_vec<float> raw_inverter_power;
     };
 
     struct DriverInput
     {
         float requested_accel; // float from 0 to 1 representing percent of accel pedal travel
         float requested_brake; // float from 0 to 1 representing pedal travel of brake
-    };
-    struct ControllerTorqueOut
-    {
-        veh_vec<float> res_torque_lim_nm;
     };
 
     struct TireDynamics
@@ -76,7 +68,7 @@ namespace core
 
     struct TorqueControlOut
     {
-        veh_vec<torque_nm> desired_torques_nm;
+        veh_vec<float> desired_torques_nm;
     };
     struct VehicleState
     {
@@ -93,7 +85,7 @@ namespace core
         SpeedControlOut prev_controller_output;
         TireDynamics tire_dynamics;
         veh_vec<float> driver_torque;
-        ControllerTorqueOut matlab_math_temp_out;
+        TorqueControlOut matlab_math_temp_out;
     };
 
     // we will have both speed and torque control output controllers
@@ -106,12 +98,21 @@ namespace core
     {
         enum class ControllerManagerStatus
         {
-            NO_ERROR,
-            ERROR_CONTROLLER_INDEX_OUT_OF_RANGE,
-            ERROR_SPEED_DIFF_TOO_HIGH,
-            ERROR_TORQUE_DIFF_TOO_HIGH,
-            ERROR_DRIVER_ON_PEDAL,
-            NUM_CONTROLLER_MANAGER_STATUSES
+            NO_ERROR = 0,
+            ERROR_CONTROLLER_INDEX_OUT_OF_RANGE = 1,
+            ERROR_SPEED_TOO_HIGH = 2,
+            ERROR_TORQUE_TOO_HIGH = 3,
+            ERROR_DRIVER_ON_PEDAL = 4,
+            ERROR_CONTROLLER_NO_TORQUE_OR_SPEED_OUTPUT = 5,
+            ERROR_OUTPUT_EXCEEDS_PHYS_LIMITS = 6,
+            ERROR_REQUESTING_SAME_CTR_TYPE = 7,
+            NUM_CONTROLLER_MANAGER_STATUSES = 8
+        };
+
+        struct ControllerManagerState
+        {
+            ControllerManagerStatus current_status;
+            ControllerOutput current_controller_output;
         };
     }
 
