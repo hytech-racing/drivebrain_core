@@ -8,11 +8,13 @@
 
 #include <string>
 #include <mutex>
+#include <type_traits>
 #include <unordered_map>
 #include <optional>
 #include <variant>
 #include <mutex>
 #include <vector>
+#include <utility>
 
 // STORY:
 
@@ -60,6 +62,14 @@ namespace core
             /// @brief helper type alias
             using ParamTypes = std::variant<bool, int, float, double, std::string, std::monostate>;
             
+            enum class ParamTypeEnum 
+            {
+                BOOL_TYPE=0,
+                INT_TYPE=1,
+                FLOAT_TYPE=2,
+                DOUBLE_TYPE=3,
+                STRING_TYPE=4
+            };
             
             
             /// @brief constructor for base class
@@ -93,7 +103,7 @@ namespace core
             /// @return param value
             Configurable::ParamTypes get_cached_param(std::string id);
             
-            nhlohmann::json get_schema();
+            nlohmann::json get_schema();
             bool is_configured() { return _configured; }
         protected:
             /// @brief boost signal that the user is expected to connect their parameter update handler function for changing their internal parameter values
@@ -149,6 +159,8 @@ namespace core
 
                     return std::nullopt;
                 }
+                auto type_enum = get_param_enum_type<ParamType>();
+                _schema_known_params.push_back(std::make_pair(key, type_enum));
                 return config[_component_name][key].get<ParamType>();
             }
 
@@ -177,7 +189,31 @@ namespace core
                 return res;
             }
 
+            template <typename ParamType>
+            ParamTypeEnum get_param_enum_type()
+            {
+                if constexpr (std::is_same_v<ParamType, bool>) {
+                    return ParamTypeEnum::BOOL_TYPE;
+                } else if(std::is_same_v<ParamType, int>) {
+                    return ParamTypeEnum::INT_TYPE;
+                } else if(std::is_same_v<ParamType, float>) {
+                    return ParamTypeEnum::FLOAT_TYPE;
+                } else if(std::is_same_v<ParamType, double>) {
+                    return ParamTypeEnum::DOUBLE_TYPE;
+                } else if(std::is_same_v<ParamType, std::string>) {
+                    return ParamTypeEnum::STRING_TYPE;
+                }
+            }
+
         private:
+            std::string _get_json_schema_type_name(ParamTypeEnum enum_type);
+        private:
+            // this vector gets appended to as the user calls the get_live_parameter() 
+            // or get_parameter_value() (which calls get_parameter_value) within the init function of the
+            // configurable component with the param name and type in a pair
+
+            std::vector<std::pair<std::string, ParamTypeEnum>> _schema_known_params;
+            
             bool _configured = false;
             core::Logger &_logger;
             std::string _component_name;
