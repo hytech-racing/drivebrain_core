@@ -1,6 +1,7 @@
 #ifndef __MSG_LOGGER__
 #define __MSG_LOGGER__
 
+#include <chrono>
 #include <memory>
 #include <string>
 
@@ -10,6 +11,10 @@
 #include <condition_variable>
 #include <mutex>
 #include <filesystem>
+
+#include <iostream>
+
+#include <spdlog/spdlog.h>
 
 #include "hytech_msgs.pb.h"
 #include <google/protobuf/message.h>
@@ -32,11 +37,15 @@ namespace core
                   std::function<void(MsgType)> logger_msg_func,
                   std::function<void()> stop_log_func,
                   std::function<void(const std::string &)> open_log_func,
-                  std::function<void(MsgType)> live_msg_output_func) : _logger_msg_function(logger_msg_func),
-                                                                       _live_msg_output_func(live_msg_output_func),
-                                                                       _log_file_extension(log_file_extension),
-                                                                       _stop_log_function(stop_log_func),
-                                                                       _open_log_function(open_log_func)
+                  std::function<void(MsgType)> live_msg_output_func,
+                  std::function<bool()> init_param_schema_for_mcap,
+                  std::function<void()> log_params_func) : _logger_msg_function(logger_msg_func),
+                                                           _live_msg_output_func(live_msg_output_func),
+                                                           _log_file_extension(log_file_extension),
+                                                           _stop_log_function(stop_log_func),
+                                                           _open_log_function(open_log_func),
+                                                           _init_param_schema_for_mcap(init_param_schema_for_mcap),
+                                                           _log_params_func(log_params_func)
         {
             _running = true;
 
@@ -45,6 +54,17 @@ namespace core
                 auto log_name = _generate_log_name(_log_file_extension);
                 _current_log_name = log_name;
                 _open_log_function(log_name);
+                if(_init_param_schema_for_mcap())
+                {
+                    spdlog::info("inited and logged params on creation");
+
+                    _param_schema_written = true;
+                    _log_params_func();
+                } else {
+                    spdlog::warn("unable to init params schema for mcap, will be attempting again in params log thread");
+
+                }
+                
                 _logging = init_logging;
             }
         }
@@ -54,7 +74,7 @@ namespace core
             // should be fine for the most part to not lock here, this is the only place we are writing these bools
             _running = false;
             _logging = false;
-            _stop_log_function();
+            // _stop_log_function();
             std::cout << "safely exited" << std::endl;
         }
 
@@ -83,6 +103,12 @@ namespace core
                 _logging = true;
                 _current_log_name = _generate_log_name(_log_file_extension);
                 _open_log_function(_current_log_name);
+                if(_init_param_schema_for_mcap())
+                {
+                    _param_schema_written = true;
+                } else {
+                    _param_schema_written = false;
+                }
             }
         }
         std::tuple<const std::string &, bool> get_logger_status()
@@ -100,14 +126,14 @@ namespace core
                 {
                     _logging = false;
                     _stop_log_function();
+                    _param_schema_written = false;
                 }
             }
             std::cout << "stopped" << std::endl;
         }
 
     private:
-        std::string _generate_log_name(const std::string &extension)
-        {
+        std::string _generate_log_name(const std::string &extension) {
             // Get the current time
             auto t = std::time(nullptr);
             auto tm = *std::localtime(&t);
@@ -132,16 +158,48 @@ namespace core
             output_function(msg);
         }
 
+        void _handle_param_log()
+        {
+            std::chrono::seconds log_time(1); // 1hz param logging
+            while(true)
+            {
+                {
+                    auto start_time = std::chrono::high_resolution_clock::now();
+                    
+                    if(_param_schema_written)
+                    {
+                        _log_params_func();
+                    } else if(_init_param_schema_for_mcap()) {
+                        // keep trying to init param schema if we have not written the param schema yet
+                        _log_params_func();
+                        spdlog::info("inited and logged params");
+
+                    }
+                    
+                    auto end_time = std::chrono::high_resolution_clock::now();
+                    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+                    if (log_time > elapsed) {
+                        std::this_thread::sleep_for(log_time - elapsed);
+                    }
+                }
+            }
+        }
+
     private:
         bool _running = true;
         bool _logging = false;
+        // mutex protects the underlying logger and member vars of the message logger
         std::mutex _mtx;
 
+        std::thread _param_log_thread;
         std::string _log_file_extension;
         std::string _current_log_name = "NONE";
         std::function<void()> _stop_log_function;
         std::function<void(const std::string &)> _open_log_function;
         std::function<void(MsgType)> _logger_msg_function;
+        bool _param_schema_written = false;
+        std::function<void()> _log_params_func;
+        std::function<bool()> _init_param_schema_for_mcap;
         std::function<void(MsgType)> _live_msg_output_func;
     };
 }

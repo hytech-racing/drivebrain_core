@@ -3,6 +3,7 @@
 // TODO make this private
 #include <JsonFileHandler.hpp>
 #include <Logger.hpp>
+#include <spdlog/spdlog.h>
 
 #include <boost/signals2.hpp>
 
@@ -87,9 +88,14 @@ namespace core
             /// @return vector of names
             std::vector<std::string> get_param_names();
 
-            /// @brief gets the map of param names with all param values
+            
+            /// @brief gets the map of param names with live param values
             /// @return unordered map of names and vals (variant)
             std::unordered_map<std::string, ParamTypes> get_params_map();
+
+            /// @brief gets the map of param names with ALL param values
+            /// @return unordered map of names and vals (variant)
+            std::unordered_map<std::string, ParamTypes> get_all_params_map();
 
             /// @brief external function signature for use by the parameter server for handling the parameter updates. calls the user-implemented boost signal
             /// @param key the id of the parameter that should be contained within the param map
@@ -105,7 +111,9 @@ namespace core
             
             nlohmann::json get_schema();
             bool is_configured() { return _configured; }
+            
         protected:
+            void set_configured() { _configured = true; }
             /// @brief boost signal that the user is expected to connect their parameter update handler function for changing their internal parameter values
             boost::signals2::signal<void(const std::unordered_map<std::string, ParamTypes> &)> param_update_handler_sig;
 
@@ -161,6 +169,14 @@ namespace core
                 }
                 auto type_enum = get_param_enum_type<ParamType>();
                 _schema_known_params.push_back(std::make_pair(key, type_enum));
+                
+                {
+                    std::unique_lock lk(_params.mtx);
+                    spdlog::info("got param: %s", key);
+                    spdlog::info(config[_component_name][key].get<ParamType>());
+                    _params.all_param_vals[key] = config[_component_name][key].get<ParamType>();
+                }
+                
                 return config[_component_name][key].get<ParamType>();
             }
 
@@ -182,8 +198,8 @@ namespace core
                 else
                 {
                     {
-                        std::unique_lock lk(_live_params.mtx);
-                        _live_params.param_vals[key] = *res;
+                        std::unique_lock lk(_params.mtx);
+                        _params.live_param_vals[key] = *res;
                     }
                 }
                 return res;
@@ -205,6 +221,8 @@ namespace core
                 }
             }
 
+            
+
         private:
             std::string _get_json_schema_type_name(ParamTypeEnum enum_type);
         private:
@@ -222,9 +240,10 @@ namespace core
             /// @brief anonymous struct for associating the mutex with what it is guarding specifically within this class
             struct
             {
-                std::unordered_map<std::string, ParamTypes> param_vals;
+                std::unordered_map<std::string, ParamTypes> live_param_vals;
+                std::unordered_map<std::string, ParamTypes> all_param_vals;
                 std::mutex mtx;
-            } _live_params;
+            } _params;
         };
 
     }

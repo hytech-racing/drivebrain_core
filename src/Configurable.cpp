@@ -1,5 +1,5 @@
 #include <Configurable.hpp>
-
+#include <unordered_map>
 
 using namespace core::common;
 std::string Configurable::get_name()
@@ -12,8 +12,8 @@ std::vector<std::string> Configurable::get_param_names()
     std::vector<std::string> names;
     {
         // lock 
-        std::unique_lock lk(_live_params.mtx);
-        for (const auto &param : _live_params.param_vals)
+        std::unique_lock lk(_params.mtx);
+        for (const auto &param : _params.live_param_vals)
         {
             names.push_back(param.first);
         }
@@ -24,11 +24,11 @@ std::vector<std::string> Configurable::get_param_names()
 Configurable::ParamTypes Configurable::get_cached_param(std::string id)
 {
     // lock onto the live params mutex so nothing else can access the map of parameters
-    std::unique_lock lk(_live_params.mtx);
+    std::unique_lock lk(_params.mtx);
     // if the param id exists within the map, return the parameter at this id, otherwise return a monostate variant type (null variant type)
-    if(_live_params.param_vals.find(id) != _live_params.param_vals.end())
+    if(_params.live_param_vals.find(id) != _params.live_param_vals.end())
     {
-        return _live_params.param_vals[id]; 
+        return _params.live_param_vals[id]; 
     } else {
         
         return std::monostate();
@@ -37,8 +37,14 @@ Configurable::ParamTypes Configurable::get_cached_param(std::string id)
 
 std::unordered_map<std::string, Configurable::ParamTypes> Configurable::get_params_map()
 {
-    std::unique_lock lk(_live_params.mtx);
-    return _live_params.param_vals;
+    std::unique_lock lk(_params.mtx);
+    return _params.live_param_vals;
+}
+
+std::unordered_map<std::string, Configurable::ParamTypes> Configurable::get_all_params_map()
+{
+    std::unique_lock lk(_params.mtx);
+    return _params.all_param_vals;
 }
 
 void Configurable::handle_live_param_update(const std::string &key, Configurable::ParamTypes param_val)
@@ -46,12 +52,13 @@ void Configurable::handle_live_param_update(const std::string &key, Configurable
     
     // TODO may want to handle this a little bit differently so we arent locking so much
     {
-        std::unique_lock lk(_live_params.mtx);
-        _live_params.param_vals[key] = param_val;
+        std::unique_lock lk(_params.mtx);
+        _params.live_param_vals[key] = param_val;
         // call the user signals that can be optionally attached
-        param_update_handler_sig(_live_params.param_vals);
+        param_update_handler_sig(_params.live_param_vals);
     }
 }
+
 std::string Configurable::_get_json_schema_type_name(Configurable::ParamTypeEnum enum_ent)
 {
     // as determined by https://json-schema.org/understanding-json-schema/reference/type
@@ -82,15 +89,12 @@ std::string Configurable::_get_json_schema_type_name(Configurable::ParamTypeEnum
     }
 }
 
-nlohmann::json Configurable::get_schema()
-{
-    nlohmann::json schema; 
-    schema[_component_name] = nlohmann::json::object();
-    schema[_component_name]["type"] = "object";
-    // schema[_component_name]["properties"] = ;
+nlohmann::json Configurable::get_schema() {
+    nlohmann::json schema = nlohmann::json::object();
+    schema["type"] = "object";
 
     for(const auto & schema_entry : _schema_known_params) {
-        schema[_component_name]["properties"][schema_entry.first]["type"] = _get_json_schema_type_name(schema_entry.second);
+        schema["properties"][schema_entry.first]["type"] = _get_json_schema_type_name(schema_entry.second);
     }
     return schema;
 }
