@@ -66,16 +66,21 @@ namespace core
                 }
                 
                 _logging = init_logging;
+                _param_log_thread = std::thread(&MsgLogger::_handle_param_log, this);
             }
         }
 
         ~MsgLogger()
         {
-            // should be fine for the most part to not lock here, this is the only place we are writing these bools
+            {
+                std::unique_lock lk(_cv_mtx);
+                _logging = false;
+            }
             _running = false;
-            _logging = false;
-            // _stop_log_function();
-            std::cout << "safely exited" << std::endl;
+            _param_log_condition.notify_all();
+            spdlog::info("notif sent to param thread to stop");
+            _param_log_thread.join();
+            std::cout << "safely exited MsgLogger" << std::endl;
         }
 
         void log_msg(MsgType msg)
@@ -106,8 +111,13 @@ namespace core
                 if(_init_param_schema_for_mcap())
                 {
                     _param_schema_written = true;
+                    
                 } else {
                     _param_schema_written = false;
+                    spdlog::error("logger cannot be initialzied due to not being able to get param schemas written up front. please init all configurable components before construction of MsgLogger"); 
+                    
+                    // for now i will throw a runtime error, i cant be bothered to fully implement this feature rn
+                    throw std::runtime_error("Failed to construct MsgLogger");
                 }
             }
         }
@@ -160,28 +170,27 @@ namespace core
 
         void _handle_param_log()
         {
+            // TODO add in interuptible sleep that can be killed from the destructor
             std::chrono::seconds log_time(1); // 1hz param logging
             while(true)
             {
+                
                 {
-                    auto start_time = std::chrono::high_resolution_clock::now();
-                    
-                    if(_param_schema_written)
+                    std::unique_lock lk(_cv_mtx);
+                    if(_param_log_condition.wait_for(lk, log_time, [this] {return !_logging; }))
                     {
-                        _log_params_func();
-                    } else if(_init_param_schema_for_mcap()) {
-                        // keep trying to init param schema if we have not written the param schema yet
-                        _log_params_func();
-                        spdlog::info("inited and logged params");
-
+                        spdlog::info("exiting log thread due to stopping of logging");
+                        return;
                     }
                     
-                    auto end_time = std::chrono::high_resolution_clock::now();
-                    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-                    if (log_time > elapsed) {
-                        std::this_thread::sleep_for(log_time - elapsed);
-                    }
                 }
+                if(_param_schema_written)
+                {
+                    spdlog::info("logged params");
+                    _log_params_func(); // this function is already thread safe since it also requests lock on the writer queue mutex
+                } 
+
+            
             }
         }
 
@@ -191,6 +200,10 @@ namespace core
         // mutex protects the underlying logger and member vars of the message logger
         std::mutex _mtx;
 
+        std::mutex _cv_mtx;
+        std::condition_variable _param_log_condition;
+        
+        
         std::thread _param_log_thread;
         std::string _log_file_extension;
         std::string _current_log_name = "NONE";
