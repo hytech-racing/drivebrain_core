@@ -92,10 +92,13 @@ std::string Configurable::_get_json_schema_type_name(Configurable::ParamTypeEnum
 // TODO does this need a mutex? idk beats me
 nlohmann::json Configurable::get_schema() {
     nlohmann::json schema = nlohmann::json::object();
+    std::cout << "getting schema for " << get_name() << std::endl;
     schema["type"] = "object";
-    
-    for(const auto & schema_entry : _schema_known_params) {
-        schema["properties"][schema_entry.first]["type"] = _get_json_schema_type_name(schema_entry.second);
+    {
+        std::unique_lock lk(_params.mtx);
+        for(const auto & schema_entry : _schema_known_params) {
+            schema["properties"][schema_entry.first]["type"] = _get_json_schema_type_name(schema_entry.second);
+        }
     }
     return schema;
 }

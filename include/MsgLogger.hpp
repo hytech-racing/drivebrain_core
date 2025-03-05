@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 #include <deque>
@@ -61,8 +62,8 @@ namespace core
                     _param_schema_written = true;
                     _log_params_func();
                 } else {
-                    spdlog::warn("unable to init params schema for mcap, will be attempting again in params log thread");
-
+                    spdlog::error("unable to init params schema for mcap, will be attempting again in params log thread");
+                    throw std::runtime_error("all configurable components must be both inited and every init() function must set_configured()");
                 }
                 
                 _logging = init_logging;

@@ -7,6 +7,7 @@
 
 #include <boost/signals2.hpp>
 
+#include <stdexcept>
 #include <string>
 #include <mutex>
 #include <type_traits>
@@ -16,6 +17,9 @@
 #include <mutex>
 #include <vector>
 #include <utility>
+#include <algorithm>
+#include <cctype>
+#include <string>
 
 // STORY:
 
@@ -46,7 +50,7 @@
 // live parameters:
 // - [x] add live parameter handling through use of boost signals
 
-// - [ ] schema creator function from json file 
+// - [x] schema creator function from json file 
 
 // the schema will be based off of the json file that we load, however nothing will be a required field.
 // this way, even if the json file that we loaded has extra fields that arent being used we will be fine
@@ -78,7 +82,14 @@ namespace core
             /// @param json_file_handler the referrence to the json file loaded in main
             /// @param component_name name of the component (required to be unique)
             Configurable(core::Logger &logger, core::JsonFileHandler &json_file_handler, const std::string &component_name)
-                : _logger(logger), _json_file_handler(json_file_handler), _component_name(component_name) {}
+                : _logger(logger), _json_file_handler(json_file_handler), _component_name(component_name) {
+                    std::string data = component_name;
+                    std::transform(data.begin(), data.end(), data.begin(), [](unsigned char c){ return std::tolower(c); });
+                    if(data == std::string("drivebrain_configuration"))
+                    {
+                        throw std::runtime_error("ERROR reserved configurable component name drivebrain_configuration shall not be used");
+                    }
+                }
 
             /// @brief getter for name
             /// @return name of the component
