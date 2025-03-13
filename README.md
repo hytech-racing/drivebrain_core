@@ -7,9 +7,9 @@ This repository has code for managing different controllers, reading and updatin
 - Eliminates hardcoded values in other files to ensure consistency across controllers
 
 ### Configurable
-- Base class that interacts with `JSONFileHandler` to retrieve and update values
-- Enables live parameter updates without requiring recompilation
-- Uses a **mutex** to prevent multiple threads from simultaneously accessing `config.json`
+- Base class that provides thread safe operations for retrieiving parameter values from `JSONFileHandler` and storing in a map
+- Provides thread safe functions for live parameter updates in a map
+- Uses a **mutex** to prevent multiple threads from simultaneously changing values in our map 
 
 ### ControllerManager
 - Inherits from `Configurable`, enabling access to parameters from `JSONFileHandler`
