@@ -90,10 +90,9 @@ namespace core
         bool state_is_valid;
         int prev_MCU_recv_millis;
         float steering_angle_deg;
-        ControllerTorqueOut prev_controller_output;
+        ControllerOutput prev_controller_output;
         TireDynamics tire_dynamics;
         veh_vec<float> driver_torque;
-        ControllerTorqueOut matlab_math_temp_out;
     };
 
     // we will have both speed and torque control output controllers
