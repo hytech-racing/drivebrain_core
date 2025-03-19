@@ -97,11 +97,11 @@ namespace core
         veh_vec<float> current_rpms;
         bool state_is_valid;
         int prev_MCU_recv_millis;
-        float steering_angle_deg;
-        ControllerOutput prev_controller_output;
+        float steering_angle_deg; //         ControllerOutput prev_controller_output;
         TireDynamics tire_dynamics;
         veh_vec<float> driver_torque;
     };
+
 
     namespace control
     {
