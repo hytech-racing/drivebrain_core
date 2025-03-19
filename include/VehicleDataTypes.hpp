@@ -78,6 +78,14 @@ namespace core
     {
         veh_vec<torque_nm> desired_torques_nm;
     };
+
+
+    // we will have both speed and torque control output controllers
+    struct ControllerOutput
+    {
+        std::variant<SpeedControlOut, TorqueControlOut, std::monostate> out;
+    };
+
     struct VehicleState
     {
         bool is_ready_to_drive;
@@ -93,12 +101,6 @@ namespace core
         ControllerOutput prev_controller_output;
         TireDynamics tire_dynamics;
         veh_vec<float> driver_torque;
-    };
-
-    // we will have both speed and torque control output controllers
-    struct ControllerOutput
-    {
-        std::variant<SpeedControlOut, TorqueControlOut, std::monostate> out;
     };
 
     namespace control
