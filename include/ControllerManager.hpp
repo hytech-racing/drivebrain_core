@@ -12,7 +12,6 @@
 #include <Configurable.hpp>
 #include <Utils.hpp>
 #include <DriverBus.hpp>
-#include <VehicleManager.hpp>
 #include <VehicleDataTypes.hpp>
 
 // will be based on: https://github.com/hytech-racing/MCU/blob/adc599c9a2a3d1afe4ee22fcad0fd1116c474500/lib/systems/include/TorqueControllerMux.h
