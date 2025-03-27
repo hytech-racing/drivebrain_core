@@ -12,6 +12,7 @@ namespace constants
     constexpr long double RPM_TO_METERS_PER_SECOND    = WHEEL_DIAMETER * 3.1415 / GEARBOX_RATIO / 60.0;
     constexpr long double RPM_TO_KILOMETERS_PER_HOUR  = RPM_TO_METERS_PER_SECOND * 3600.0 / 1000.0;
     constexpr long double METERS_PER_SECOND_TO_RPM    = 1.0 / RPM_TO_METERS_PER_SECOND;
+    constexpr long double POWER_LIMIT                 = 63000.0; // in watts of mechanical power
 
     constexpr long double RPM_TO_RAD_PER_SECOND = 2.0 * 3.1415 / 60.0;
     constexpr long double RAD_PER_SECOND_TO_RPM = 1.0 / RPM_TO_RAD_PER_SECOND;
