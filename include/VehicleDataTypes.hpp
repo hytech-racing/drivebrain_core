@@ -101,6 +101,8 @@ namespace core
         SpeedControlOut prev_controller_output;
         TireDynamics tire_dynamics;
         veh_vec<float> driver_torque;
+        ControllerTorqueOut matlab_math_temp_out;
+
     };
 
 
