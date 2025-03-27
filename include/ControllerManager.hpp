@@ -86,6 +86,14 @@ namespace control
             return _controllers[_current_controller_index]->get_dt_sec();
         }
 
+        //// @brief fetches the active controller index
+        /// @return the index of the active controller
+        int get_active_controller_index()
+        {
+            return _current_controller_index;
+        }
+
+
         /// @brief allows access to controller manager state for efficient communication
         /// @return ControllerManagerState types: ControllerManagerStatus, ControllerOutput
         core::control::ControllerManagerState get_current_ctr_manager_state()
