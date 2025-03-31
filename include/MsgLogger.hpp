@@ -28,11 +28,13 @@ namespace core
         };
 
         MsgLogger(const std::string &log_file_extension,
-                  bool init_logging,
-                  std::function<void(MsgType)> logger_msg_func,
-                  std::function<void()> stop_log_func,
-                  std::function<void(const std::string &)> open_log_func,
-                  std::function<void(MsgType)> live_msg_output_func) : _logger_msg_function(logger_msg_func),
+            bool init_logging,
+            std::function<void(MsgType)> logger_msg_func,
+            std::function<void()> stop_log_func,
+            std::function<void(const std::string &)> open_log_func,
+            std::function<void(MsgType)> live_msg_output_func,
+            std::function<bool()> init_param_schema_for_mcap,
+            std::function<void()> log_params_func) : _logger_msg_function(logger_msg_func),
                                                                        _live_msg_output_func(live_msg_output_func),
                                                                        _log_file_extension(log_file_extension),
                                                                        _stop_log_function(stop_log_func),
