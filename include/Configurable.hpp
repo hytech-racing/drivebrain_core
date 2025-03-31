@@ -2,7 +2,6 @@
 
 // TODO make this private
 #include <JsonFileHandler.hpp>
-#include <Logger.hpp>
 #include <spdlog/spdlog.h>
 
 #include <boost/signals2.hpp>
@@ -81,8 +80,8 @@ namespace core
             /// @param logger 
             /// @param json_file_handler the referrence to the json file loaded in main
             /// @param component_name name of the component (required to be unique)
-            Configurable(core::Logger &logger, core::JsonFileHandler &json_file_handler, const std::string &component_name)
-                : _logger(logger), _json_file_handler(json_file_handler), _component_name(component_name) {
+            Configurable(core::JsonFileHandler &json_file_handler, const std::string &component_name)
+                : _json_file_handler(json_file_handler), _component_name(component_name) {
                     std::string data = component_name;
                     std::transform(data.begin(), data.end(), data.begin(), [](unsigned char c){ return std::tolower(c); });
                     if(data == std::string("drivebrain_configuration"))
@@ -165,8 +164,7 @@ namespace core
                 if (!config.contains(_component_name))
                 {
                     auto log_str = std::string("config file does not contain config for component: ") + _component_name;
-
-                    _logger.log_string(log_str, core::LogLevel::WARNING);
+                    spdlog::warn(log_str);
                     return std::nullopt;
                 }
 
@@ -174,8 +172,7 @@ namespace core
                 if (!config[_component_name].contains(key))
                 {
                     auto log_str = std::string("config file does not contain config: ") + key + std::string(" for component: ") + _component_name;
-                    _logger.log_string(log_str, core::LogLevel::WARNING);
-
+                    spdlog::warn(log_str);
                     return std::nullopt;
                 }
                 auto type_enum = get_param_enum_type<ParamType>();
@@ -244,7 +241,6 @@ namespace core
             std::vector<std::pair<std::string, ParamTypeEnum>> _schema_known_params;
             
             bool _configured = false;
-            core::Logger &_logger;
             std::string _component_name;
             core::JsonFileHandler &_json_file_handler;
             
