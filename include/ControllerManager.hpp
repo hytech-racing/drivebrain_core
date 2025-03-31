@@ -63,7 +63,7 @@ namespace control
         /// @param json_file_handler current file handler to handle controller configurations
         /// @param controllers list of controllers that the manager will mux between and manager
         /// @param state_estimator instance to allow for direct communication between controllers and state estimator
-        ControllerManager(core::Logger &logger, core::JsonFileHandler &json_file_handler, std::array<ControllerType *, NumControllers> controllers) : Configurable(logger, json_file_handler, "ControllerManager"),
+        ControllerManager(core::Logger &logger, core::JsonFileHandler &json_file_handler, std::array<std::shared_ptr<ControllerType>, NumControllers> controllers) : Configurable(logger, json_file_handler, "ControllerManager"),
                                                                                                                                 _controllers(controllers), _logger_inst(logger)
         {
         }
