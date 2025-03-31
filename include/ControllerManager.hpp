@@ -113,7 +113,7 @@ namespace control
         core::control::ControllerManagerStatus _can_switch_controller(const core::VehicleState &current_state, const core::ControllerOutput &previous_output, const core::ControllerOutput &next_controller_output);
         size_t _current_controller_index = 0;
         core::control::ControllerManagerState _current_ctr_manager_state;
-        std::array<ControllerType *, NumControllers> _controllers;
+        std::array<std::shared_ptr<ControllerType>, NumControllers> _controllers;
         core::Logger _logger_inst;
         float _max_switch_rpm, _max_torque_switch, _max_accel_switch_req, _max_requested_rpm;
     };
