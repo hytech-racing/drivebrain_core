@@ -63,10 +63,17 @@ core::control::ControllerManagerStatus control::ControllerManager<ControllerType
         _current_ctr_manager_state.current_status = status_type::ERROR_DRIVER_ON_PEDAL;
         return _current_ctr_manager_state.current_status;
     }
+    return status_type::NO_ERROR;
+
+
+    // all that stuff down there is bad I think. basially that code ensures that the future controller isn't commanding above the switch RPM,
+    // which doesn't really make sense as a requriement?
+
     // function to check whether or not the controller output is with range. 
     // can determine what type the controller output is and checks to see whether or not it has issues.
     // if the controller output is a speed controller type: checks both desired rpms level and max torque limit level to verify range.
     // if the controller output is a torque controller type: only checks the torque setpoint
+    /*
     auto verify_controller_output = [this, &check_veh_vec](const core::ControllerOutput &controller_output) -> status_type
     {   
         // 1: "trajectory/speed" control (speed control with torque limit)
@@ -117,6 +124,7 @@ core::control::ControllerManagerStatus control::ControllerManager<ControllerType
         _current_ctr_manager_state.current_status = switch_status;
     }
     return _current_ctr_manager_state.current_status;
+    */
 }
 
 template <typename ControllerType, size_t NumControllers>
@@ -139,7 +147,6 @@ bool control::ControllerManager<ControllerType, NumControllers>::swap_active_con
             return false;
         }
     }
-
     if(_can_switch_controller(input, {_controllers[_current_controller_index]->step_controller(input)}, {_controllers[new_controller_index]->step_controller(input)}) == status_type::NO_ERROR)
     {
         _current_controller_index = new_controller_index;
