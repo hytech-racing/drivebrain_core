@@ -73,15 +73,17 @@ namespace core
 
         ~MsgLogger()
         {
-            {
-                std::unique_lock lk(_cv_mtx);
-                _logging = false;
-            }
+            _logging = false;
             _running = false;
             _param_log_condition.notify_all();
             spdlog::info("notif sent to param thread to stop");
             _param_log_thread.join();
             std::cout << "safely exited MsgLogger" << std::endl;
+        }
+        void halt() 
+        { 
+            _running = false; 
+            _logging = false; 
         }
 
         void log_msg(MsgType msg)
@@ -183,6 +185,12 @@ namespace core
                         spdlog::info("exiting log thread due to stopping of logging");
                         return;
                     }
+
+                    if(!_running)
+                    {
+                        spdlog::info("stopping running");
+                        return;
+                    }
                     
                 }
                 if(_param_schema_written)
@@ -194,6 +202,8 @@ namespace core
             
             }
         }
+
+        
 
     private:
         bool _running = true;
