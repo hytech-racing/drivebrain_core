@@ -73,6 +73,7 @@ namespace core
 
         ~MsgLogger()
         {
+            spdlog::info("destructing message logger");
             _logging = false;
             _running = false;
             _param_log_condition.notify_all();

@@ -102,7 +102,7 @@ namespace core
         TireDynamics tire_dynamics;
         veh_vec<float> driver_torque;
         ControllerTorqueOut matlab_math_temp_out;
-
+        veh_vec<float> suspension_potentiometers_mm;
     };
 
 
