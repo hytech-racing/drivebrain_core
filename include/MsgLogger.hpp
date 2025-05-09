@@ -2,6 +2,7 @@
 #define __MSG_LOGGER__
 
 #include <chrono>
+#include <cstdlib>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -32,6 +33,8 @@ namespace core
             std::condition_variable cv;
             std::deque<MsgType> deque;
         };
+
+        
 
         MsgLogger(const std::string &log_file_extension,
                   bool init_logging,
@@ -67,8 +70,12 @@ namespace core
                 }
                 
                 _logging = init_logging;
-                _param_log_thread = std::thread(&MsgLogger::_handle_param_log, this);
             }
+        }
+
+        void start_logging_params()
+        {
+            _param_log_thread = std::thread([this]() { _handle_param_log(); });
         }
 
         ~MsgLogger()
@@ -134,7 +141,7 @@ namespace core
                 }
             }
         }
-        std::tuple<const std::string &, bool> get_logger_status()
+        std::tuple<std::string, bool> get_logger_status()
         {
             std::unique_lock lk(_mtx);
             return {_current_log_name, _logging};
@@ -142,7 +149,7 @@ namespace core
 
         void stop_logging_to_file()
         {
-            std::cout << "attempting stop" << std::endl;
+            spdlog::info("attempting stop");
             {
                 std::unique_lock lk(_mtx);
                 if (_logging)
@@ -152,7 +159,7 @@ namespace core
                     _param_schema_written = false;
                 }
             }
-            std::cout << "stopped" << std::endl;
+            spdlog::info("stopped logging");
         }
 
     private:
