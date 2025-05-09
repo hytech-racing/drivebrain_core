@@ -78,7 +78,10 @@ namespace core
             _running = false;
             _param_log_condition.notify_all();
             spdlog::info("notif sent to param thread to stop");
-            _param_log_thread.join();
+            if(_param_log_thread.joinable())
+            {
+                _param_log_thread.join();
+            }
             std::cout << "safely exited MsgLogger" << std::endl;
         }
         void halt() 
@@ -87,8 +90,6 @@ namespace core
             _logging = false; 
             _param_log_condition.notify_all();
             spdlog::info("notif sent to param thread to stop");
-            _param_log_thread.join();
-            spdlog::info("msg logger halted");
         }
 
         void log_msg(MsgType msg)
