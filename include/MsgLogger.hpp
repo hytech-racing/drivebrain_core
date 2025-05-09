@@ -85,22 +85,30 @@ namespace core
         { 
             _running = false; 
             _logging = false; 
+            _param_log_condition.notify_all();
+            spdlog::info("notif sent to param thread to stop");
+            _param_log_thread.join();
+            spdlog::info("msg logger halted");
         }
 
         void log_msg(MsgType msg)
         {
             // TODO maybe make this also more thread safe ... ?
-            bool logging = true;
+            if(_running)
             {
-                std::unique_lock lk(_mtx);
-                logging = _logging;
-            }
+                bool logging = true;
+                {
+                    std::unique_lock lk(_mtx);
+                    logging = _logging;
+                }
 
-            if (logging)
-            {
-                _handle_output_messages(msg, _logger_msg_function);   
+                if (logging)
+                {
+                    _handle_output_messages(msg, _logger_msg_function);   
+                }
+                _handle_output_messages(msg, _live_msg_output_func);
             }
-            _handle_output_messages(msg, _live_msg_output_func);
+            
         }
 
         // will only open a new file for logging if we are not currently logging
