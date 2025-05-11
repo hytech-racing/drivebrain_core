@@ -73,6 +73,11 @@ namespace control
         /// @return true or false depending on success of init
         bool init();
 
+        void update_controllers(std::array<std::shared_ptr<ControllerType>, NumControllers> controllers)
+        {
+            _controllers = controllers;
+        }
+
         /// @brief attempts to switch the active controller
         /// @param new_controller_index desired controller index
         /// @return true if it successfully switches and false if it does not

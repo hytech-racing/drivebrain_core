@@ -22,6 +22,6 @@ void core::JsonFileHandler::_load_config() {
     }
     else
     {
-        spdlog::error("Config file not found, creating new one.");
+        spdlog::error("Config file not found");
     }
 }
