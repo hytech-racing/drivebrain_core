@@ -6,7 +6,7 @@ bool control::ControllerManager<ControllerType, NumControllers>::init()
     std::optional max_switch_speed = get_parameter_value<float>("max_controller_switch_speed_ms");
     std::optional max_torque_switch = get_parameter_value<float>("max_torque_switch_nm");
     std::optional max_accel_switch_request = get_parameter_value<float>("max_accel_switch_float");
-    std::optional max_requested_rpm = get_parameter_value<float>("max_switch_requested_rpm");
+    std::optional max_requested_rpm = get_parameter_value<float>("max_requested_rpm");
     if (!(max_switch_speed && max_torque_switch && max_accel_switch_request && max_requested_rpm))
     {
         std::cout << "ERROR: couldnt get params" << std::endl;
