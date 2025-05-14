@@ -18,9 +18,6 @@
 
 #include <spdlog/spdlog.h>
 
-#include "hytech_msgs.pb.h"
-#include <google/protobuf/message.h>
-
 namespace core
 {
     template <typename MsgType>
