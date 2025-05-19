@@ -22,6 +22,13 @@ namespace core
         veh_vec<float> raw_inverter_power;
     };
 
+    struct Position
+    {
+        double lat;
+        double lon;
+        bool valid;
+    };
+
     struct DriverInput
     {
         float requested_accel; // float from 0 to 1 representing percent of accel pedal travel
@@ -103,6 +110,7 @@ namespace core
         veh_vec<float> driver_torque;
         ControllerTorqueOut matlab_math_temp_out;
         veh_vec<float> suspension_potentiometers_mm;
+        Position vehicle_position;
     };
 
 
