@@ -3,6 +3,7 @@
 #include <Utils.hpp>
 #include <Literals.hpp>
 #include <variant>
+#include <cstdint>
 
 // TODO this will need a one-to-one protobuf message
 namespace core
@@ -111,6 +112,7 @@ namespace core
         ControllerTorqueOut matlab_math_temp_out;
         veh_vec<float> suspension_potentiometers_mm;
         Position vehicle_position;
+        veh_vec<float> normalized_corner_load;
     };
 
 
