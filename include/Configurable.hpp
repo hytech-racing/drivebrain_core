@@ -180,7 +180,7 @@ namespace core
                 
                 {
                     std::unique_lock lk(_params.mtx);
-                    spdlog::info("got param: %s", key);
+                    spdlog::info("got param: {}", key);
                     spdlog::info(config[_component_name][key].get<ParamType>());
                     _params.all_param_vals[key] = config[_component_name][key].get<ParamType>();
                 }

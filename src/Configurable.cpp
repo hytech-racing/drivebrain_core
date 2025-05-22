@@ -54,6 +54,7 @@ void Configurable::handle_live_param_update(const std::string &key, Configurable
     {
         std::unique_lock lk(_params.mtx);
         _params.live_param_vals[key] = param_val;
+        _params.all_param_vals[key] = param_val;
         // call the user signals that can be optionally attached
         param_update_handler_sig(_params.live_param_vals);
     }
