@@ -68,7 +68,7 @@ core::control::ControllerManagerStatus control::ControllerManager<ControllerType
     // if the controller output is a speed controller type: checks both desired rpms level and max torque limit level to verify range.
     // if the controller output is a torque controller type: only checks the torque setpoint
     auto verify_controller_output = [this, &check_veh_vec](const core::ControllerOutput &controller_output) -> status_type
-    {   
+    {
         // 1: "trajectory/speed" control (speed control with torque limit)
         // check: make sure that either the setpoint rpm is low enough OR (AND?) the torque setpoint is low enough
         if (const core::SpeedControlOut *pval = std::get_if<core::SpeedControlOut>(&controller_output.out))

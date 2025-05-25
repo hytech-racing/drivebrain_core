@@ -112,7 +112,7 @@ namespace core
         ControllerTorqueOut matlab_math_temp_out;
         veh_vec<float> suspension_potentiometers_mm;
         Position vehicle_position;
-        veh_vec<float> normalized_corner_load;
+        veh_vec<float> loadcells;
     };
 
 
