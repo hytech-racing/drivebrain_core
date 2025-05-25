@@ -128,7 +128,8 @@ namespace core
             ERROR_CONTROLLER_NO_TORQUE_OR_SPEED_OUTPUT = 5,
             ERROR_OUTPUT_EXCEEDS_PHYS_LIMITS = 6,
             ERROR_REQUESTING_SAME_CTR_TYPE = 7,
-            NUM_CONTROLLER_MANAGER_STATUSES = 8
+            NUM_CONTROLLER_MANAGER_STATUSES = 8,
+            ERROR_NULLPTR_CONTROLLER = 9
         };
 
         struct ControllerManagerState

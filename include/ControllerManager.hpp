@@ -110,7 +110,12 @@ namespace control
         /// @param input current vehicle state maintained by the state estimator
         /// @return respective controller output to command the drivetrain
         core::ControllerOutput step_active_controller(const core::VehicleState& input)
-        {   
+        {
+            if(!_controllers[_current_controller_index] || _controllers[_current_controller_index] == nullptr)
+            {
+                _current_ctr_manager_state.current_status = core::control::ControllerManagerStatus::ERROR_NULLPTR_CONTROLLER;
+                return {std::monostate()};
+            }
             return _controllers[_current_controller_index]->step_controller(input);
         }
 
