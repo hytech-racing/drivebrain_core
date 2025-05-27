@@ -113,6 +113,7 @@ namespace core
         veh_vec<float> suspension_potentiometers_mm;
         Position vehicle_position;
         veh_vec<float> loadcells;
+        veh_vec<float> current_torques_nm;
     };
 
 
