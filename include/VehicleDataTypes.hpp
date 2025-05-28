@@ -93,7 +93,11 @@ namespace core
     {
         std::variant<SpeedControlOut, TorqueControlOut, std::monostate> out;
     };
-
+    struct INSStatus 
+    {
+        float vel_uncertainty;
+        int status_mode;
+    };
     struct VehicleState
     {
         bool is_ready_to_drive;
@@ -114,6 +118,7 @@ namespace core
         Position vehicle_position;
         veh_vec<float> loadcells;
         veh_vec<float> current_torques_nm;
+        INSStatus ins_status;
     };
 
 
