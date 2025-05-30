@@ -119,6 +119,7 @@ namespace core
         veh_vec<float> loadcells;
         veh_vec<float> current_torques_nm;
         INSStatus ins_status;
+        float old_energy_meter_kw;
     };
 
 
