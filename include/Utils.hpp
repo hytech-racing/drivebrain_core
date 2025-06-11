@@ -32,7 +32,24 @@ struct veh_vec
         } else {
             RR = val;
         }
-
+    }
+    
+    template <size_t ind>
+    T get_from_index()
+    {
+        static_assert(ind <= 3, "ERROR: index cannot be greater than 3");
+        if constexpr (ind == 0)
+        {
+            return FL;
+        } else if(ind == 1)
+        {
+            return FR;
+        } else if(ind == 2)
+        {
+            return RL;
+        } else {
+            return RR;
+        }
     }
 };
 

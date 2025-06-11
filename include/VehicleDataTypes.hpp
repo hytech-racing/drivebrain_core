@@ -98,6 +98,12 @@ namespace core
         float vel_uncertainty;
         int status_mode;
     };
+    struct DrivetrainData
+    {
+        veh_vec<float> raw_inverter_igbt_temps_c;
+        veh_vec<float> raw_inverter_coldplate_temps_c;
+        veh_vec<float> raw_inverter_motor_temps_c;
+    };
     struct VehicleState
     {
         bool is_ready_to_drive;
@@ -120,6 +126,7 @@ namespace core
         veh_vec<float> current_torques_nm;
         INSStatus ins_status;
         float old_energy_meter_kw;
+        DrivetrainData dt_data;
     };
 
 
