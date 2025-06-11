@@ -100,9 +100,9 @@ namespace core
     };
     struct DrivetrainData
     {
-        veh_vec<float> raw_inverter_igbt_temps_c;
-        veh_vec<float> raw_inverter_coldplate_temps_c;
-        veh_vec<float> raw_inverter_motor_temps_c;
+        veh_vec<float> inverter_igbt_temps_c;
+        veh_vec<float> inverter_coldplate_temps_c;
+        veh_vec<float> inverter_temps_c;
     };
     struct VehicleState
     {
