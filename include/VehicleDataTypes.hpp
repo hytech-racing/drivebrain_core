@@ -118,7 +118,7 @@ namespace core
         float steering_angle_deg;
         ControllerOutput prev_controller_output;
         TireDynamics tire_dynamics;
-        veh_vec<float> driver_torque;inverter_temps_c
+        veh_vec<float> driver_torque;
         ControllerTorqueOut matlab_math_temp_out;
         veh_vec<float> suspension_potentiometers_mm;
         Position vehicle_position;
