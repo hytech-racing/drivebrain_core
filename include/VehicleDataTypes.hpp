@@ -104,6 +104,10 @@ namespace core
         veh_vec<float> inverter_temps_c;
         veh_vec<float> inverter_motor_temps_c;
     };
+    struct AccumulatorData
+    {
+        float min_cell_voltage;
+    };
     struct VehicleState
     {
         bool is_ready_to_drive;
@@ -127,6 +131,7 @@ namespace core
         INSStatus ins_status;
         float old_energy_meter_kw;
         DrivetrainData dt_data;
+        AccumulatorData acc_data;
     };
 
 
