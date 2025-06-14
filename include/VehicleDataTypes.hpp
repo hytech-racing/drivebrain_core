@@ -107,6 +107,7 @@ namespace core
     struct AccumulatorData
     {
         float min_cell_voltage;
+        float pack_voltage;
     };
     struct VehicleState
     {
