@@ -118,6 +118,7 @@ namespace core
         xyz_vec<float> current_angular_rate_rads;
         ypr_vec<float> current_ypr_rad;
         veh_vec<float> current_rpms;
+        veh_vec<float> motor_overload_percentages;
         bool state_is_valid;
         int prev_MCU_recv_millis;
         float steering_angle_deg;
